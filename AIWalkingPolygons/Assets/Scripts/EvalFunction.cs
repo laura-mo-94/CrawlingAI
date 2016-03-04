@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EvalFunction : MonoBehaviour {
+public class EvalFunction
+{
 
-	int evalFunction (Creature c) {
-		int distance = 0;
+	public double evalFunction (Creature c) {
+		double distance = 0.0;
 		distance = c.getStart() - c.getEnd();
 		return distance;
 	}

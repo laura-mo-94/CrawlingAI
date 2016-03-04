@@ -86,9 +86,8 @@ public class GenericEvolution
 
     private double evaluateCreature(Creature creature)
     {
-        // to do
-        double temp = 0.1;
-        return temp;
+        EvalFunction ef = new EvalFunction();
+        return ef.evalFunction(creature);
     }
 
 
