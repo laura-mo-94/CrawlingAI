@@ -66,8 +66,20 @@ public class GenericEvolution
 
     Creature mutate(Creature creature)
     {
-        // to do
+        List<MovementNode> sequence = creature.Sequence;
+        foreach(MovementNode mn in sequence)
+        {
+            mn.Force = mn.Force * (1 + (float)rand.NextDouble() - 0.5F);
+            mn.Delay = mn.Delay * (1 + (float)rand.NextDouble() - 0.5F);
+        }
+
+        List<int> segment = shuffle();
+        for(int i=0; i<segment.Count; i++)
+        {
+            sequence[i].Segment = segment[i];
+        }
         
+
         return creature;
     }
 
@@ -77,6 +89,29 @@ public class GenericEvolution
         // to do
         double temp = 0.1;
         return temp;
+    }
+
+
+    private List<int> shuffle()
+    {
+        List<int> list = new List<int>();
+        list.Add(0);
+        list.Add(1);
+        list.Add(2);
+
+        List<int> shuffled = new List<int>();
+
+        int index = rand.Next() % 3;
+        shuffled.Add(list[index]);
+        list[index] = list[2];
+
+        index = rand.Next() % 2;
+        shuffled.Add(list[index]);
+        list[index] = list[1];
+
+        shuffled.Add(list[0]);
+
+        return shuffled;
     }
 
     private int getIndexFromRoulette(List<double> roulette)
