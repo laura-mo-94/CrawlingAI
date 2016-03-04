@@ -46,7 +46,29 @@ public class GenericEvolution
             nextGen.Add(child2);
         }
 
+        int bestIndex = findBest(nextGen);
+        Creature best = nextGen[bestIndex];
+        nextGen[bestIndex] = nextGen[0];
+        nextGen[0] = best;
+
         return nextGen;
+    }
+
+    private int findBest(List<Creature> creatures)
+    {
+        int index = 0;
+        double eval = evaluateCreature(creatures[0]);
+        for(int i=1; i<creatures.Count; i++)
+        {
+            double ev = evaluateCreature(creatures[i]);
+            if(eval < ev)
+            {
+                index = i;
+                eval = ev;
+            }
+        }
+
+        return index;
     }
 
     List<Creature> crossover(List<Creature> creatures)
