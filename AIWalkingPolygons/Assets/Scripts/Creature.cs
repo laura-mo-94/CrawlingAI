@@ -103,4 +103,19 @@ public class Creature : MonoBehaviour
 			segmentMeshes[i].displayMesh(d);
 		}
 	}
+
+	public int getSegmentCount()
+	{
+		return segments.Count;
+	}
+
+	public List<MovementNode> Sequence
+	{
+		get{
+			return sequence;
+		}
+		set{
+			sequence = value;
+		}
+	}
 }
