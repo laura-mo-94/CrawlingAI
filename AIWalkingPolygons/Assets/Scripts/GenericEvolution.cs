@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -73,6 +72,7 @@ public class GenericEvolution
         List<MovementNode> sequence = creature.Sequence;
         foreach(MovementNode mn in sequence)
         {
+            mn.Direction = new Vector2(Random.Range(0f, 2f), Random.Range(0f, 2f));
             mn.Force = mn.Force * (1 + (float)rand.NextDouble() - 0.5F);
             mn.Delay = mn.Delay * (1 + (float)rand.NextDouble() - 0.5F);
         }
