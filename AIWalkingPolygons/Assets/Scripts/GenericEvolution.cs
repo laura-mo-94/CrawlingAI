@@ -49,17 +49,26 @@ public class GenericEvolution
 
     List<Creature> crossover(List<Creature> creatures)
     {
-        // to do
-        List<Creature> child = new List<Creature>();
-        return child;
+        List<MovementNode> sequence1 = creatures[0].Sequence;
+        List<MovementNode> sequence2 = creatures[1].Sequence;
+
+        MovementNode m1 = sequence1[1];
+        MovementNode m2 = sequence2[1];
+
+        sequence1[1] = m2;
+        sequence2[1] = m1;
+
+        creatures[0].Sequence = sequence1;
+        creatures[1].Sequence = sequence2;
+        
+        return creatures;
     }
 
     Creature mutate(Creature creature)
     {
         // to do
-        Creature mutation = new Creature();
-
-        return mutation;
+        
+        return creature;
     }
 
 
