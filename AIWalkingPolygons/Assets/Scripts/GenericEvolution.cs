@@ -27,19 +27,22 @@ public class GenericEvolution
                 List<Creature> parents = new List<Creature>();
                 parents.Add(child1);
                 parents.Add(child2);
+
                 List<Creature> children = crossover(parents);
                 child1 = children[0];
                 child2 = children[1];
+
+
+                if (rand.NextDouble() < mutatioinProb)
+                {
+                    child1 = mutate(child1);
+                }
+                if (rand.NextDouble() < mutatioinProb)
+                {
+                    child2 = mutate(child2);
+                }
             }
 
-            if (rand.NextDouble() < mutatioinProb)
-            {
-                child1 = mutate(child1);
-            }
-            if (rand.NextDouble() < mutatioinProb)
-            {
-                child2 = mutate(child2);
-            }
             nextGen.Add(child1);
             nextGen.Add(child2);
         }
@@ -52,11 +55,12 @@ public class GenericEvolution
         List<MovementNode> sequence1 = creatures[0].Sequence;
         List<MovementNode> sequence2 = creatures[1].Sequence;
 
-        MovementNode m1 = sequence1[1];
-        MovementNode m2 = sequence2[1];
+        int randInt = rand.Next() % 3;
+        MovementNode m1 = sequence1[randInt];
+        MovementNode m2 = sequence2[randInt];
 
-        sequence1[1] = m2;
-        sequence2[1] = m1;
+        sequence1[randInt] = m2;
+        sequence2[randInt] = m1;
 
         creatures[0].Sequence = sequence1;
         creatures[1].Sequence = sequence2;
@@ -79,7 +83,6 @@ public class GenericEvolution
             sequence[i].Segment = segment[i];
         }
         
-
         return creature;
     }
 
