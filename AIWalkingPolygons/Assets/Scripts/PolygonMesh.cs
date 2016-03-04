@@ -9,6 +9,8 @@ public class PolygonMesh : MonoBehaviour
 	public Material material;
 
 	public Mesh mesh;
+
+	MeshRenderer meshRenderer;	
 	PolygonCollider2D polyCol;
 
 	// Use this for initialization
@@ -39,10 +41,10 @@ public class PolygonMesh : MonoBehaviour
 		mesh.RecalculateNormals();
 		mesh.RecalculateBounds();
 
-		MeshRenderer renderer = gameObject.AddComponent<MeshRenderer> ();
+		meshRenderer = gameObject.AddComponent<MeshRenderer> ();
 		MeshFilter filter = gameObject.AddComponent<MeshFilter> ();
 		filter.mesh = mesh;
-		renderer.material = material;
+		meshRenderer.material = material;
 		polyCol = gameObject.AddComponent<PolygonCollider2D>();
 
 		polyCol.points = vector2Points.ToArray ();
@@ -109,5 +111,10 @@ public class PolygonMesh : MonoBehaviour
 		}
 		
 		return new Vector2(mesh.vertices[index].x, mesh.vertices[index].y);
+	}
+
+	public void displayMesh(bool display)
+	{
+		meshRenderer.enabled = display;
 	}
 }
