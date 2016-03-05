@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -16,8 +17,11 @@ public class Tournament : MonoBehaviour {
 
 	public int maxGenerations;
 	public List<List<GameObject>> environmentPieces;
+	public Text generationLabel;
 
 	int rowSize;
+	int currentGeneration;
+
 	List<Creature> generation;
 
 	float currentTime;
@@ -28,19 +32,19 @@ public class Tournament : MonoBehaviour {
 	void Start () {
 		currentTime = 0;
 		mainCam = Camera.main;
-
+		currentGeneration = 0;
 		rowSize = Mathf.CeilToInt (Mathf.Sqrt (populationSize));
 
 		environmentPieces = new List<List<GameObject>> ();
 
 		generation = CreateCreatures ();
 		evolution = new GeneticEvolution ();
-
+		generationLabel.text = "Generation: " + currentGeneration;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (maxGenerations >= 0) 
+		if (currentGeneration < maxGenerations) 
 		{
 			if (currentTime < generationTime) 
 			{
@@ -50,9 +54,9 @@ public class Tournament : MonoBehaviour {
 			} 
 			else 
 			{
-				maxGenerations --;
+				currentGeneration ++;
 				currentTime = 0f;
-			
+				generationLabel.text = "Generation: " + currentGeneration;
 				List<Creature> nextGen = evolution.CreateNextGen(generation);
 				replaceCreatures(nextGen);
 			}
