@@ -3,13 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public class GenericEvolution
+public class GeneticEvolution
 {
     public double mutatioinProb = 0.1;
     public double crossoverProb = 0.9;
     private System.Random rand = new System.Random();
 
-    List<Creature> CreateNextGen(List<Creature> creatures)
+    public List<Creature> CreateNextGen(List<Creature> creatures)
     {
         List<Creature> nextGen = new List<Creature>();
         List<double> roulette = getRoulette(creatures);

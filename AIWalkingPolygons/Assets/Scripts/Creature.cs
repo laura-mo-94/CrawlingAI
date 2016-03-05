@@ -18,38 +18,33 @@ public class Creature : MonoBehaviour
 	int current;
 	float currentDelay;
 
-	public Creature(List<MovementNode> seq)
+	Vector3 start;
+	Vector3 end;
+
+	public void Awake()
 	{
-		sequence = seq;
 		current = 0;
 		currentDelay = 0f;
+		CreateCreature ();
 	}
 
-	// Use this for initialization
-	void Start () 
-	{
-
-	}
-	
-	// Update is called once per frame
-	void Update () 
-	{
-		runSequence ();
-	}
-
-	public void CreateCreature(bool display)
+	public void CreateCreature()
 	{
 		segments = new List<GameObject> ();
 		joints = new List<HingeJoint2D> ();
 		rigidBodies = new List<Rigidbody2D> ();
-		
+		segmentMeshes = new List<PolygonMesh> ();
+
 		foreach(Transform child in transform)
 		{
 			segments.Add (child.gameObject);
-			segmentMeshes.Add(child.GetComponent<PolygonMesh>());
+			PolygonMesh segmentMesh = child.GetComponent<PolygonMesh>();
+			segmentMesh.CreateMesh();
+			segmentMeshes.Add(segmentMesh);
 			rigidBodies.Add(child.GetComponent<Rigidbody2D>());
 		}
-		
+
+		start = segments[1].transform.position;
 		LinkSegments (segments);
 	}
 
@@ -77,23 +72,16 @@ public class Creature : MonoBehaviour
 			rigidBodies[sequence[current].Segment].AddForce(sequence[current].Force * sequence[current].Direction, ForceMode2D.Impulse);
 			currentDelay = 0f;
 			current ++;
+
+			if(current >= sequence.Count)
+			{
+				current = 0;
+			}
 		}
 		else
 		{
 			currentDelay += Time.deltaTime;
 		}
-	}
-
-	public float getTotalForce()
-	{
-		totalForce = 0;
-
-		for(int i = 0; i < segments.Count; i++)
-		{
-			totalForce  = totalForce + (rigidBodies[i].velocity.magnitude * rigidBodies[i].transform.up.y);
-		}
-
-		return totalForce;
 	}
 
 	public void display(bool d)
@@ -118,4 +106,34 @@ public class Creature : MonoBehaviour
 			sequence = value;
 		}
 	}
+
+	public Vector3 Start
+	{
+		get 
+		{
+			return start;
+		}
+		set
+		{
+			start = value;
+		}
+	}
+
+	public Vector3 End
+	{
+		get
+		{
+			return end;
+		}
+		set
+		{
+			end = value;
+		}
+	}
+
+	public Vector3 getPosition()
+	{
+		return segments [1].transform.position;
+	}
+
 }

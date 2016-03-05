@@ -6,7 +6,7 @@ public class EvalFunction
 
 	public double evalFunction (Creature c) {
 		double distance = 0.0;
-		distance = c.getStart() - c.getEnd();
+		distance = c.End.x - c.Start.x;
 		return distance;
 	}
 }

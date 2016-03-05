@@ -13,9 +13,15 @@ public class PolygonMesh : MonoBehaviour
 	MeshRenderer meshRenderer;	
 	PolygonCollider2D polyCol;
 
-	// Use this for initialization
-	void Awake () {
-		CreateMesh ();
+	public bool preExisting;
+	public int id;
+
+	public void Start()
+	{
+		if(preExisting)
+		{
+			CreateMesh ();
+		}
 	}
 	
 	// Update is called once per frame
@@ -23,7 +29,7 @@ public class PolygonMesh : MonoBehaviour
 	
 	}
 
-	void CreateMesh()
+	public void CreateMesh()
 	{
 		mesh = new Mesh ();
 		mesh.vertices = points.ToArray ();
@@ -87,6 +93,8 @@ public class PolygonMesh : MonoBehaviour
 	{
 		int index = 0;
 
+		Debug.Log ("trying to get mesh for " + this);
+
 		for(int i = 1; i < mesh.vertices.Length; i++)
 		{
 			if(mesh.vertices[index].x < mesh.vertices[i].x)
@@ -117,4 +125,5 @@ public class PolygonMesh : MonoBehaviour
 	{
 		meshRenderer.enabled = display;
 	}
+
 }
