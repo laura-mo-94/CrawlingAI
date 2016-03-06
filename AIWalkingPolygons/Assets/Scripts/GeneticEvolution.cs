@@ -54,6 +54,7 @@ public class GeneticEvolution
         return nextGen;
     }
 
+    // find best creature
     private int findBest(List<Creature> creatures)
     {
         int index = 0;
@@ -115,7 +116,7 @@ public class GeneticEvolution
         return ef.evalFunction(creature);
     }
 
-
+    // return random permutated list. e.g. [1 0 2], [0 2 1], [0, 1, 2]
     private List<int> shuffle()
     {
         List<int> list = new List<int>();
@@ -138,6 +139,10 @@ public class GeneticEvolution
         return shuffled;
     }
 
+    // example 
+    // input rultette is [0.1, 0.5, 0.7, 1]
+    // generate randome real number in [0, 1]. assume randome number R = 0.3
+    // return 1 because 0.1 < R < 0.5 and its index is 1
     private int getIndexFromRoulette(List<double> roulette)
     {
         double rnum = rand.NextDouble();
@@ -150,6 +155,7 @@ public class GeneticEvolution
         return roulette.Count - 1;
     }
 
+    // make normalized roulette. normalized roulette is comulated in range [0, 1]
     private List<double> getRoulette(List<Creature> creatures)
     {
         List<double> roulette = new List<double>();
@@ -161,6 +167,9 @@ public class GeneticEvolution
         return comulateRoulette(normalizeRoulette(roulette));
     }
 
+    // example
+    // input [10 4 3 12 15 6]
+    // return [0.2 0.08 0.06 0.24 0.3 0.12]
     private List<double> normalizeRoulette(List<double> roulette)
     {
         List<double> normalized = new List<double>();
@@ -179,6 +188,9 @@ public class GeneticEvolution
         return normalized;
     }
 
+    // example
+    // input [0.2 0.08 0.06 0.24 0.3 0.12]
+    // return [0.2 0.28 0.34 0.58 0.88 1]
     private List<double> comulateRoulette(List<double> roulette)
     {
         List<double> comulated = new List<double>();
