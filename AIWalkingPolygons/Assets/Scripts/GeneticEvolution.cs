@@ -1,58 +1,76 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
+using System.Linq;
 
 public class GeneticEvolution
 {
-    public double mutatioinProb = 0.1;
+    public double mutatioinProb = 0.3;
     public double crossoverProb = 0.9;
     private System.Random rand = new System.Random();
 
     public List<Creature> CreateNextGen(List<Creature> creatures)
     {
-        return creatures;
-        ////List<Creature> nextGen = new List<Creature>();
-        ////List<double> roulette = getRoulette(creatures);
+        //return creatures;
+        List<Creature> nextGen = new List<Creature>();
+        List<double> roulette = getRoulette(creatures);
 
-        ////for (int i = 0; i < creatures.Count / 2; i++)
-        ////{
-        ////    int indexP1 = getIndexFromRoulette(roulette);
-        ////    int indexP2 = getIndexFromRoulette(roulette);
-        ////    Creature child1 = creatures[indexP1];
-        ////    Creature child2 = creatures[indexP2];
+        for (int i = 0; i < creatures.Count / 2; i++)
+        {
+            int indexP1 = getIndexFromRoulette(roulette);
+            int indexP2 = getIndexFromRoulette(roulette);
+            Creature child1 = creatures[indexP1];
+            Creature child2 = creatures[indexP2];
 
-        ////    if (rand.NextDouble() < crossoverProb)
-        ////    {
-        ////        List<Creature> parents = new List<Creature>();
-        ////        parents.Add(child1);
-        ////        parents.Add(child2);
+            if (rand.NextDouble() < crossoverProb)
+            {
+                List<Creature> parents = new List<Creature>();
+                parents.Add(child1);
+                parents.Add(child2);
 
-        ////        List<Creature> children = crossover(parents);
-        ////        child1 = children[0];
-        ////        child2 = children[1];
+                List<Creature> children = crossover(parents);
+                child1 = children[0];
+                child2 = children[1];
 
 
-        ////        if (rand.NextDouble() < mutatioinProb)
-        ////        {
-        ////            child1 = mutate(child1);
-        ////        }
-        ////        if (rand.NextDouble() < mutatioinProb)
-        ////        {
-        ////            child2 = mutate(child2);
-        ////        }
-        ////    }
+                if (rand.NextDouble() < mutatioinProb)
+                {
+                    child1 = mutate(child1);
+                }
+                if (rand.NextDouble() < mutatioinProb)
+                {
+                    child2 = mutate(child2);
+                }
+            }
 
-        ////    nextGen.Add(child1);
-        ////    nextGen.Add(child2);
-        ////}
+            nextGen.Add(child1);
+            nextGen.Add(child2);
+        }
 
-        ////int bestIndex = findBest(nextGen);
-        ////Creature best = nextGen[bestIndex];
-        ////nextGen[bestIndex] = nextGen[0];
-        ////nextGen[0] = best;
+        int bestIndex = findBest(nextGen);
+        Creature best = nextGen[bestIndex];
+        nextGen[bestIndex] = nextGen[0];
+        nextGen[0] = best;
 
-        ////return nextGen;
+        List<MovementNode> sequence = best.Sequence;
+        Debug.Log("Best Sequence) " + evaluateCreature(best).ToString() + toStringSequence(sequence));
+
+        return nextGen;
+    }
+
+    private string toStringSequence(List<MovementNode> sequence)
+    {
+        string result = "";
+        for(int i=0; i<sequence.Count; i++)
+        {
+            result += "\tNode" + i + ": " + toStringMovementNode(sequence[i]);
+        }
+        return result;
+    }
+
+    private string toStringMovementNode(MovementNode movement)
+    {
+        return "Delay = " + movement.Delay + " Force = " + movement.Force + " Segment = " + movement.Segment;
     }
 
     // find best creature
@@ -78,36 +96,51 @@ public class GeneticEvolution
         List<MovementNode> sequence1 = creatures[0].Sequence;
         List<MovementNode> sequence2 = creatures[1].Sequence;
 
-        int randInt = rand.Next() % 3;
-        MovementNode m1 = sequence1[randInt];
-        MovementNode m2 = sequence2[randInt];
+        List<MovementNode> crossed1 = new List<MovementNode>();
+        List<MovementNode> crossed2 = new List<MovementNode>();
 
-        sequence1[randInt] = m2;
-        sequence2[randInt] = m1;
+        for (int i = 0; i < sequence1.Count; i++)
+        {
+            int randInt = rand.Next() % 2;
+            if (randInt == 0)
+            {
+                crossed1.Add(sequence1[i]);
+                crossed2.Add(sequence2[i]);
+            }
+            else
+            {
+                crossed1.Add(sequence2[i]);
+                crossed2.Add(sequence1[i]);
+            }
+        }
 
-        creatures[0].Sequence = sequence1;
-        creatures[1].Sequence = sequence2;
-        
+        creatures[0].Sequence = crossed1;
+        creatures[1].Sequence = crossed2;
+
         return creatures;
     }
 
     Creature mutate(Creature creature)
     {
         List<MovementNode> sequence = creature.Sequence;
-        foreach(MovementNode mn in sequence)
+        foreach (MovementNode mn in sequence)
         {
             mn.Direction = new Vector2(Random.Range(0f, 0.5f), Random.Range(0.5f, 2f));
             mn.Force = mn.Force * (1 + (float)rand.NextDouble() - 0.5F);
+            mn.Force = mn.Force > Tournament.instance.maxForce ? Tournament.instance.maxForce : mn.Force;
             mn.Delay = mn.Delay * (1 + (float)rand.NextDouble() - 0.5F);
         }
 
-        List<int> segment = shuffle();
-        for(int i=0; i<segment.Count; i++)
-        {
-            sequence[i].Segment = segment[i];
-        }
-        
-        return creature;
+        //List<int> shuffleNum = shuffle(sequence.Count);
+        //for (int i = 0; i < sequence.Count; i++)
+        //{
+        //    sequence[i].Segment = shuffleNum[i];
+        //}
+
+        Creature mutation = creature;
+        mutation.Sequence = sequence;
+
+        return mutation;
     }
 
 
@@ -118,26 +151,18 @@ public class GeneticEvolution
     }
 
     // return random permutated list. e.g. [1 0 2], [0 2 1], [0, 1, 2]
-    private List<int> shuffle()
+    private List<int> shuffle(int num)
     {
-        List<int> list = new List<int>();
-        list.Add(0);
-        list.Add(1);
-        list.Add(2);
+        List<int> list = Enumerable.Range(0, num).ToList<int>();
+        for (int i = 0; i < list.Count - 1; i++)
+        {
+            int index = rand.Next() % (num - 1 - i);
+            int temp = list[index];
+            list[index] = list[num - 1 - i];
+            list[num - 1 - i] = temp;
+        }
 
-        List<int> shuffled = new List<int>();
-
-        int index = rand.Next() % 3;
-        shuffled.Add(list[index]);
-        list[index] = list[2];
-
-        index = rand.Next() % 2;
-        shuffled.Add(list[index]);
-        list[index] = list[1];
-
-        shuffled.Add(list[0]);
-
-        return shuffled;
+        return list;
     }
 
     // example 
@@ -183,7 +208,15 @@ public class GeneticEvolution
 
         foreach (double f in roulette)
         {
-            normalized.Add(f / sum);
+            if((int)sum == 0)
+            {
+                normalized.Add(1.0 / roulette.Count);
+            }
+            else
+            {
+                normalized.Add(f / sum);
+            }
+            
         }
 
         return normalized;

@@ -133,7 +133,7 @@ public class Creature : MonoBehaviour
 
 	public Vector3 getPosition()
 	{
-		return segments [1].transform.position;
+		return segments [1].transform.localPosition;
 	}
 
 }

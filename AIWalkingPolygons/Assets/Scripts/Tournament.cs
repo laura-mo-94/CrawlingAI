@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public class Tournament : MonoBehaviour {
 
+    public static Tournament instance;
 	public int populationSize;
 	public float generationTime;
 	public int numPassedOn;
@@ -30,6 +31,7 @@ public class Tournament : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        instance = this;
 		currentTime = 0;
 		mainCam = Camera.main;
 		currentGeneration = 0;
@@ -54,11 +56,15 @@ public class Tournament : MonoBehaviour {
 			} 
 			else 
 			{
+                for(int i = 0; i < generation.Count; i++)
+                {
+                    generation[i].End = generation[i].getPosition();
+                }
 				currentGeneration ++;
 				currentTime = 0f;
 				generationLabel.text = "Generation: " + currentGeneration;
 				List<Creature> nextGen = evolution.CreateNextGen(generation);
-                Debug.Log(nextGen.Count + " in next generation");
+
 				replaceCreatures(nextGen);
 			}
 
@@ -74,35 +80,32 @@ public class Tournament : MonoBehaviour {
 
 		for(int i = 0; i < populationSize; i++)
 		{
-			if(column < rowSize)
+			if(column == 0)
 			{
-				if(column == 0)
-				{
-					environmentPieces.Add(new List<GameObject>());
-				}
-
-				GameObject env = GameObject.Instantiate(environmentPrefab);
-				env.transform.position = new Vector2(row * 40f, column * 40f);
-				environmentPieces[row].Add(env);
-				env.transform.parent = transform;
-
-				GameObject c = GameObject.Instantiate(creaturePrefab);
-				Creature creature = c.GetComponent<Creature>();
-				creature.display(false);
-				creature.Sequence = createSequence(creature);
-				c.transform.parent = env.transform;
-				creature.transform.localPosition = Vector3.zero;
-				creatures.Add (creature);
-
-				column++;
+				environmentPieces.Add(new List<GameObject>());
 			}
-			else
-			{
+
+			GameObject env = GameObject.Instantiate(environmentPrefab);
+			env.transform.position = new Vector2(row * 40f, column * 40f);
+			environmentPieces[row].Add(env);
+			env.transform.parent = transform;
+
+			GameObject c = GameObject.Instantiate(creaturePrefab);
+			Creature creature = c.GetComponent<Creature>();
+			creature.display(false);
+			creature.Sequence = createSequence(creature);
+			c.transform.parent = env.transform;
+			creature.transform.localPosition = Vector3.zero;
+			creatures.Add (creature);
+
+			column++;
+			if(column >= rowSize)
+            {
 				column = 0;
 				row ++;
 			}
 		}
-
+        
 		creatures [0].display (true);
 		return creatures;
 	}
@@ -137,7 +140,7 @@ public class Tournament : MonoBehaviour {
 	public void replaceCreatures(List<Creature> nextGen)
 	{
 		List<List<MovementNode>> sequences = new List<List<MovementNode>> ();
-		Debug.Log ("next " + nextGen.Count);
+
 		for(int x = 0; x < generation.Count; x++)
 		{
 			sequences.Add (nextGen[x].Sequence);
@@ -150,7 +153,7 @@ public class Tournament : MonoBehaviour {
 
 		int current = 0;
 
-        Debug.Log(rowSize + " rows" + nextGen.Count);
+
 		for (int i = 0; i < rowSize; i++)
 		{
 			for(int j = 0; j < rowSize; j++)
@@ -164,7 +167,8 @@ public class Tournament : MonoBehaviour {
 					current ++;
 					c.transform.parent = environmentPieces[i][j].transform;
 					creature.transform.localPosition = Vector3.zero;
-					generation.Add (creature);
+                    creature.Start = creature.getPosition();
+                    generation.Add (creature);
 
 				}
 			}
