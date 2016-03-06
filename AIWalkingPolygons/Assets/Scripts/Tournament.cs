@@ -58,6 +58,7 @@ public class Tournament : MonoBehaviour {
 				currentTime = 0f;
 				generationLabel.text = "Generation: " + currentGeneration;
 				List<Creature> nextGen = evolution.CreateNextGen(generation);
+                Debug.Log(nextGen.Count + " in next generation");
 				replaceCreatures(nextGen);
 			}
 
@@ -75,7 +76,6 @@ public class Tournament : MonoBehaviour {
 		{
 			if(column < rowSize)
 			{
-				Debug.Log ("hi");
 				if(column == 0)
 				{
 					environmentPieces.Add(new List<GameObject>());
@@ -141,20 +141,21 @@ public class Tournament : MonoBehaviour {
 		for(int x = 0; x < generation.Count; x++)
 		{
 			sequences.Add (nextGen[x].Sequence);
-			GameObject.Destroy(generation[x]);
+            GameObject.Destroy(generation[x].gameObject);
 		}
 
 		generation.Clear ();
 
-		int rowSize = Mathf.CeilToInt (Mathf.Sqrt (nextGen.Count));
+		int rowSize = Mathf.CeilToInt (Mathf.Sqrt (sequences.Count));
 
 		int current = 0;
 
+        Debug.Log(rowSize + " rows" + nextGen.Count);
 		for (int i = 0; i < rowSize; i++)
 		{
 			for(int j = 0; j < rowSize; j++)
 			{
-				if(generation.Count < nextGen.Count)
+				if(generation.Count < sequences.Count)
 				{
 					GameObject c = GameObject.Instantiate(creaturePrefab);
 					Creature creature = c.GetComponent<Creature>();
@@ -168,7 +169,7 @@ public class Tournament : MonoBehaviour {
 				}
 			}
 		}
-
+ 
 		generation [0].display (true);
 	}
 }

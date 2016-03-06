@@ -11,47 +11,48 @@ public class GeneticEvolution
 
     public List<Creature> CreateNextGen(List<Creature> creatures)
     {
-        List<Creature> nextGen = new List<Creature>();
-        List<double> roulette = getRoulette(creatures);
+        return creatures;
+        ////List<Creature> nextGen = new List<Creature>();
+        ////List<double> roulette = getRoulette(creatures);
 
-        for (int i = 0; i < creatures.Count / 2; i++)
-        {
-            int indexP1 = getIndexFromRoulette(roulette);
-            int indexP2 = getIndexFromRoulette(roulette);
-            Creature child1 = creatures[indexP1];
-            Creature child2 = creatures[indexP2];
+        ////for (int i = 0; i < creatures.Count / 2; i++)
+        ////{
+        ////    int indexP1 = getIndexFromRoulette(roulette);
+        ////    int indexP2 = getIndexFromRoulette(roulette);
+        ////    Creature child1 = creatures[indexP1];
+        ////    Creature child2 = creatures[indexP2];
 
-            if (rand.NextDouble() < crossoverProb)
-            {
-                List<Creature> parents = new List<Creature>();
-                parents.Add(child1);
-                parents.Add(child2);
+        ////    if (rand.NextDouble() < crossoverProb)
+        ////    {
+        ////        List<Creature> parents = new List<Creature>();
+        ////        parents.Add(child1);
+        ////        parents.Add(child2);
 
-                List<Creature> children = crossover(parents);
-                child1 = children[0];
-                child2 = children[1];
+        ////        List<Creature> children = crossover(parents);
+        ////        child1 = children[0];
+        ////        child2 = children[1];
 
 
-                if (rand.NextDouble() < mutatioinProb)
-                {
-                    child1 = mutate(child1);
-                }
-                if (rand.NextDouble() < mutatioinProb)
-                {
-                    child2 = mutate(child2);
-                }
-            }
+        ////        if (rand.NextDouble() < mutatioinProb)
+        ////        {
+        ////            child1 = mutate(child1);
+        ////        }
+        ////        if (rand.NextDouble() < mutatioinProb)
+        ////        {
+        ////            child2 = mutate(child2);
+        ////        }
+        ////    }
 
-            nextGen.Add(child1);
-            nextGen.Add(child2);
-        }
+        ////    nextGen.Add(child1);
+        ////    nextGen.Add(child2);
+        ////}
 
-        int bestIndex = findBest(nextGen);
-        Creature best = nextGen[bestIndex];
-        nextGen[bestIndex] = nextGen[0];
-        nextGen[0] = best;
+        ////int bestIndex = findBest(nextGen);
+        ////Creature best = nextGen[bestIndex];
+        ////nextGen[bestIndex] = nextGen[0];
+        ////nextGen[0] = best;
 
-        return nextGen;
+        ////return nextGen;
     }
 
     // find best creature

@@ -93,8 +93,6 @@ public class PolygonMesh : MonoBehaviour
 	{
 		int index = 0;
 
-		Debug.Log ("trying to get mesh for " + this);
-
 		for(int i = 1; i < mesh.vertices.Length; i++)
 		{
 			if(mesh.vertices[index].x < mesh.vertices[i].x)
