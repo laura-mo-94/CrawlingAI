@@ -12,6 +12,8 @@ public class Tournament : MonoBehaviour {
 	public float minForce;
 	public float maxForce;
 	public int sequenceLength;
+	public float minDelay;
+	public float maxDelay;
 
 	public GameObject creaturePrefab;
 	public GameObject environmentPrefab;
@@ -120,7 +122,7 @@ public class Tournament : MonoBehaviour {
 			dir.Normalize();
 			float force = Random.Range (minForce, maxForce);
 			int segment = Random.Range(0, creature.getSegmentCount());
-			float delay = Random.Range(0.2f, 1f);
+			float delay = Random.Range(minDelay, maxDelay);
 			sequence.Add(new MovementNode(dir, force, delay, segment));
 		}
 
