@@ -136,11 +136,10 @@ public class GeneticEvolution
             mn.Delay = mn.Delay < Tournament.instance.minDelay ? Tournament.instance.minDelay : mn.Delay;
         }
 
-        //List<int> shuffleNum = shuffle(sequence.Count);
-        //for (int i = 0; i < sequence.Count; i++)
-        //{
-        //    sequence[i].Segment = shuffleNum[i];
-        //}
+        for (int i = 0; i < sequence.Count; i++)
+        {
+            sequence[i].Segment = Random.Range(0, creature.getSegmentCount());
+        }
 
         Creature mutation = creature;
         mutation.Sequence = sequence;
