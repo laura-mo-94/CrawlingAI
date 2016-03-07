@@ -126,10 +126,14 @@ public class GeneticEvolution
         foreach (MovementNode mn in sequence)
         {
             mn.Direction = new Vector2(Random.Range(0f, 0.5f), Random.Range(0.5f, 2f));
+
             mn.Force = mn.Force * (1 + (float)rand.NextDouble() - 0.5F);
             mn.Force = mn.Force > Tournament.instance.maxForce ? Tournament.instance.maxForce : mn.Force;
             mn.Force = mn.Force < Tournament.instance.minForce ? Tournament.instance.minForce : mn.Force;
+
             mn.Delay = mn.Delay * (1 + (float)rand.NextDouble() - 0.5F);
+            mn.Delay = mn.Delay > Tournament.instance.maxDelay ? Tournament.instance.maxDelay : mn.Delay;
+            mn.Delay = mn.Delay < Tournament.instance.minDelay ? Tournament.instance.minDelay : mn.Delay;
         }
 
         //List<int> shuffleNum = shuffle(sequence.Count);
