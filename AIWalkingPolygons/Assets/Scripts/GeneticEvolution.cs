@@ -5,17 +5,27 @@ using System.Linq;
 
 public class GeneticEvolution
 {
-    public double mutatioinProb = 0.3;
+    public double mutatioinProb = 0.1;
     public double crossoverProb = 0.9;
     private System.Random rand = new System.Random();
 
     public List<Creature> CreateNextGen(List<Creature> creatures)
     {
-        //return creatures;
-        List<Creature> nextGen = new List<Creature>();
+        Debug.Log("Best Creature) " + toStringCreature(creatures[findBest(creatures)]));
+
+        //List<Creature> nextGen = new List<Creature>();
+        //for (int i = 0; i < creatures.Count; i++)
+        //{
+        //    nextGen.Add(creatures[0]);
+        //}
+
+
+        /////////////////////////////////////////////////////////////////////////
+        int passNum = 6;
+        List<Creature> nextGen = passParents(creatures, passNum);
         List<double> roulette = getRoulette(creatures);
 
-        for (int i = 0; i < creatures.Count / 2; i++)
+        for (int i = 0; i < (creatures.Count - passNum) / 2; i++)
         {
             int indexP1 = getIndexFromRoulette(roulette);
             int indexP2 = getIndexFromRoulette(roulette);
@@ -32,45 +42,27 @@ public class GeneticEvolution
                 child1 = children[0];
                 child2 = children[1];
 
-
-                if (rand.NextDouble() < mutatioinProb)
-                {
-                    child1 = mutate(child1);
-                }
-                if (rand.NextDouble() < mutatioinProb)
-                {
-                    child2 = mutate(child2);
-                }
+                child1 = mutate(child1);
+                child2 = mutate(child2);
             }
 
             nextGen.Add(child1);
             nextGen.Add(child2);
         }
 
-        int bestIndex = findBest(nextGen);
-        Creature best = nextGen[bestIndex];
-        nextGen[bestIndex] = nextGen[0];
-        nextGen[0] = best;
-
-        List<MovementNode> sequence = best.Sequence;
-        Debug.Log("Best Sequence) " + evaluateCreature(best).ToString() + toStringSequence(sequence));
-
         return nextGen;
     }
 
-    private string toStringSequence(List<MovementNode> sequence)
-    {
-        string result = "";
-        for(int i=0; i<sequence.Count; i++)
-        {
-            result += "\tNode" + i + ": " + toStringMovementNode(sequence[i]);
-        }
-        return result;
-    }
 
-    private string toStringMovementNode(MovementNode movement)
+    private List<Creature> passParents(List<Creature> creatures, int passNum)
     {
-        return "Delay = " + movement.Delay + " Force = " + movement.Force + " Segment = " + movement.Segment;
+        List<Creature> tops = new List<Creature>();
+        for (int i=0; i<passNum; i++)
+        {
+            creatures = swap(creatures, findBest(creatures.GetRange(i, creatures.Count-i)) + i, i);
+            tops.Add(creatures[i]);
+        }
+        return tops;
     }
 
     // find best creature
@@ -89,6 +81,14 @@ public class GeneticEvolution
         }
 
         return index;
+    }
+
+    private List<Creature> swap(List<Creature> creatures, int index1, int index2)
+    {
+        Creature tempCreture = creatures[index1];
+        creatures[index1] = creatures[index2];
+        creatures[index2] = tempCreture;
+        return creatures;
     }
 
     List<Creature> crossover(List<Creature> creatures)
@@ -123,6 +123,55 @@ public class GeneticEvolution
     Creature mutate(Creature creature)
     {
         List<MovementNode> sequence = creature.Sequence;
+
+        if (rand.NextDouble() < mutatioinProb)
+        {
+            sequence = mutateDirection(sequence);
+        }
+
+        if (rand.NextDouble() < mutatioinProb)
+        {
+            sequence = mutateForce(sequence);
+        }
+
+        if (rand.NextDouble() < mutatioinProb)
+        {
+            sequence = mutateDelay(sequence);
+        }
+
+        if (rand.NextDouble() < mutatioinProb)
+        {
+            sequence = mutateSegment(sequence, creature.getSegmentCount());
+        }
+
+        Creature mutation = creature;
+        mutation.Sequence = sequence;
+
+        return mutation;
+    }
+
+    private List<MovementNode> mutateDirection(List<MovementNode> sequence)
+    {
+        foreach (MovementNode mn in sequence)
+        {
+            mn.Direction = new Vector2(Random.Range(0f, 0.5f), Random.Range(0.5f, 2f));
+        }
+        return sequence;
+    }
+
+    private List<MovementNode> mutateForce(List<MovementNode> sequence)
+    {
+        foreach (MovementNode mn in sequence)
+        {
+            mn.Force = mn.Force * (1 + (float)rand.NextDouble() - 0.5F);
+            mn.Force = mn.Force > Tournament.instance.maxForce ? Tournament.instance.maxForce : mn.Force;
+            mn.Force = mn.Force < Tournament.instance.minForce ? Tournament.instance.minForce : mn.Force;
+        }
+        return sequence;
+    }
+
+    private List<MovementNode> mutateDelay(List<MovementNode> sequence)
+    {
         foreach (MovementNode mn in sequence)
         {
             mn.Direction = new Vector2(Random.Range(0f, 0.5f), Random.Range(0.5f, 2f));
@@ -135,18 +184,17 @@ public class GeneticEvolution
             mn.Delay = mn.Delay > Tournament.instance.maxDelay ? Tournament.instance.maxDelay : mn.Delay;
             mn.Delay = mn.Delay < Tournament.instance.minDelay ? Tournament.instance.minDelay : mn.Delay;
         }
-
-        for (int i = 0; i < sequence.Count; i++)
-        {
-            sequence[i].Segment = Random.Range(0, creature.getSegmentCount());
-        }
-
-        Creature mutation = creature;
-        mutation.Sequence = sequence;
-
-        return mutation;
+        return sequence;
     }
 
+    private List<MovementNode> mutateSegment(List<MovementNode> sequence, int numSegments)
+    {
+        foreach (MovementNode mn in sequence)
+        {
+            mn.Segment = Random.Range(0, numSegments);
+        }
+        return sequence;
+    }
 
     private double evaluateCreature(Creature creature)
     {
@@ -238,5 +286,27 @@ public class GeneticEvolution
             comulated.Add(comulated[i - 1] + roulette[i]);
         }
         return comulated;
+    }
+
+    private string toStringCreature(Creature creature)
+    {
+        return "Evaluation: " + evaluateCreature(creature).ToString() + "\n" + toStringSequence(creature.Sequence);
+    }
+
+    private string toStringSequence(List<MovementNode> sequence)
+    {
+        string result = "";
+        for (int i = 0; i < sequence.Count; i++)
+        {
+            result += "Node" + i + ": " + toStringMovementNode(sequence[i]);
+            if (i != sequence.Count - 1)
+                result += "\n";
+        }
+        return result;
+    }
+
+    private string toStringMovementNode(MovementNode movement)
+    {
+        return "Delay = " + movement.Delay + " Force = " + movement.Force + " Segment = " + movement.Segment;
     }
 }
