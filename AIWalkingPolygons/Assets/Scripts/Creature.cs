@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 
+[XmlRoot("Root")]
 public class Creature : MonoBehaviour 
 {
 	List<GameObject> segments;
@@ -13,7 +15,10 @@ public class Creature : MonoBehaviour
 	public float forceLimit;
 
 	float totalForce;
-	List<MovementNode> sequence;
+
+	[XmlArray("Sequence")]
+	[XmlArrayItem("MovementNodes")]
+	public List<MovementNode> sequence;
 
 	int current;
 	float currentDelay;

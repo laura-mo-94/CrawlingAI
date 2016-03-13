@@ -1,13 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using System.Xml;
+using System.Xml.Serialization;
 
 public class MovementNode {
 
-	private Vector2 direction;
-	private float force;
-	private float delay;
-	private int segment;
+	//[XmlAttribute("direction")]
+	public Vector2 direction;
+
+	//[XmlAttribute("force")]
+	public float force;
+
+	//[XmlAttribute("delay")]
+	public float delay;
+
+	//[XmlAttribute("sesgment")]
+	public int segment;
 
 	public MovementNode(Vector2 dir, float f, float del, int s)
 	{

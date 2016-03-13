@@ -1,26 +1,30 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Xml;
+using System.Xml.Serialization;
+using System.IO;
 
-public class Serializer : MonoBehaviour {
+public class Serializer {
 
 	public void Serialize(List<MovementNode> sequence)
 	{
-		using (var stream = File.Create("seq.xml")) {
-			var serializer = new XmlSerializer(typeof(List<MovementNode>));
-			serializer.Serialize(stream, sequence);
-		}
+		var serializer = new XmlSerializer (typeof(List<MovementNode>));
+		var stream = new FileStream("seq.xml", FileMode.Create);
+		serializer.Serialize(stream, this);
+		stream.Close();
 	}
 
 	public List<MovementNode> Deserialize()
 	{
-		// IF DOESN'T WORK, change to the path of "seq.xml" on your computer
 		string path = "seq.xml";
 		List<MovementNode> sequence = new List<MovementNode>();
 		XmlSerializer serializer = new XmlSerializer(typeof(List<MovementNode>));
-		StreamReader reader = new StreamReader(path);
+		var stream = new FileStream(path, FileMode.Open);
 
-		sequence = (List<MovementNode>)serializer.Deserialize(reader);
-		reader.Close();
+		var creature = serializer.Deserialize(stream) as Creature;
+		sequence = creature.sequence;
+		stream.Close();
 
 		return sequence;
 	}
