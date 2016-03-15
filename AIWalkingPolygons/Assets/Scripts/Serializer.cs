@@ -7,10 +7,11 @@ using System.IO;
 
 public class Serializer {
 
-	public void Serialize(List<MovementNode> sequence)
+	public void Serialize(Creature c)
 	{
-		var serializer = new XmlSerializer (typeof(List<MovementNode>));
+		var serializer = new XmlSerializer (typeof(Creature));
 		var stream = new FileStream("seq.xml", FileMode.Create);
+		//'this' may be a possible problem:
 		serializer.Serialize(stream, this);
 		stream.Close();
 	}
@@ -19,7 +20,7 @@ public class Serializer {
 	{
 		string path = "seq.xml";
 		List<MovementNode> sequence = new List<MovementNode>();
-		XmlSerializer serializer = new XmlSerializer(typeof(List<MovementNode>));
+		XmlSerializer serializer = new XmlSerializer(typeof(Creature));
 		var stream = new FileStream(path, FileMode.Open);
 
 		var creature = serializer.Deserialize(stream) as Creature;
